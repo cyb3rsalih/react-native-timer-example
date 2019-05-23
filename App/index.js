@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, StatusBar, TouchableOpacity, Dimensions, Picker, Platform} from 'react-native';
-import { white } from 'ansi-colors';
+
+
 
 const screen = Dimensions.get('window')
 
@@ -58,6 +59,8 @@ export default class App extends Component {
 				this.setState({ 
 					remainingSeconds: parseInt(this.state.selectedMinutes,10) * 60 + parseInt(this.state.selectedSeconds,10),
 					isRunning : true })
+
+				
 
 				this.interval = setInterval(() => {
 					this.setState({ remainingSeconds: this.state.remainingSeconds -1 })
@@ -131,7 +134,8 @@ export default class App extends Component {
 							<Text style={[styles.buttonText,styles.buttonTextStop]} >Stop</Text>
 					</TouchableOpacity>
 				}
-    
+
+	
 
 
       </View>
@@ -198,5 +202,12 @@ const styles = StyleSheet.create({
 	pickerItem:{
 		color:'#fff',
 		fontSize:20
-	}
+	},
+	backgroundVideo: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+  },
 });
