@@ -1,9 +1,14 @@
 import React, {Component} from 'react';
-import {StyleSheet, Text, View, StatusBar, TouchableOpacity, Dimensions, Picker, Platform} from 'react-native';
+import {Vibration ,StyleSheet, Text, View, StatusBar, TouchableOpacity, Dimensions, Picker, Platform} from 'react-native';
 var Sound = require('react-native-sound');
 Sound.setCategory('Playback');
 var start = new Sound('start.mp3', Sound.MAIN_BUNDLE)
 var end = new Sound('end.wav', Sound.MAIN_BUNDLE)
+
+const DURATION = 1000 // For ios, not changeable
+// Wait times between vibrates.
+// If passed with true it will be a loop -> 1,2,3,1,2,3
+const PATTERN = [1000,2000,3000] 
 
 const screen = Dimensions.get('window')
 
@@ -62,19 +67,21 @@ export default class App extends Component {
 	
 
 	onPressStart = () => {
-		start.play()
-
+		
+		Vibration.vibrate(DURATION)
 				this.setState({ 
 					remainingSeconds: parseInt(this.state.selectedMinutes,10) * 60 + parseInt(this.state.selectedSeconds,10),
 					isRunning : true })
 					
 				this.interval = setInterval(() => {
-					this.setState({ remainingSeconds: this.state.remainingSeconds -1 })
+					this.setState({ remainingSeconds: this.state.remainingSeconds -1 },() =>  start.play())
 				},1000)		
 	}
 
 	stop = () => {
 		end.play()
+		start.play()
+		Vibration.vibrate(2000)
 		clearInterval(this.interval)
 		this.interval = null
 		//this.setState({remainingSeconds : 5})
