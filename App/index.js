@@ -1,7 +1,9 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, View, StatusBar, TouchableOpacity, Dimensions, Picker, Platform} from 'react-native';
-
-
+var Sound = require('react-native-sound');
+Sound.setCategory('Playback');
+var start = new Sound('start.mp3', Sound.MAIN_BUNDLE)
+var end = new Sound('end.wav', Sound.MAIN_BUNDLE)
 
 const screen = Dimensions.get('window')
 
@@ -41,6 +43,10 @@ export default class App extends Component {
 	interval = null
 
 
+	componentDidMount(){
+	
+	}
+
 	componentDidUpdate(prevProps, prevState) {
 		if(this.state.remainingSeconds === 0 && prevState.remainingSeconds !== 0 ){
 			this.stop()
@@ -56,18 +62,19 @@ export default class App extends Component {
 	
 
 	onPressStart = () => {
+		start.play()
+
 				this.setState({ 
 					remainingSeconds: parseInt(this.state.selectedMinutes,10) * 60 + parseInt(this.state.selectedSeconds,10),
 					isRunning : true })
-
-				
-
+					
 				this.interval = setInterval(() => {
 					this.setState({ remainingSeconds: this.state.remainingSeconds -1 })
 				},1000)		
 	}
 
 	stop = () => {
+		end.play()
 		clearInterval(this.interval)
 		this.interval = null
 		//this.setState({remainingSeconds : 5})
@@ -112,6 +119,7 @@ export default class App extends Component {
 
   render() {
 		const { minutes, seconds } = getRemaining(this.state.remainingSeconds)
+		
     return (
       <View style={styles.container}>
         <StatusBar barStyle='light-content' />
@@ -135,7 +143,6 @@ export default class App extends Component {
 					</TouchableOpacity>
 				}
 
-	
 
 
       </View>
