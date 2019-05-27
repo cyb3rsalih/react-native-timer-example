@@ -169,7 +169,7 @@ class App extends Component {
 const mapStateToProps = (state) => {
 	const { deneme } = state.settings
 	return {
-		deneme: myState
+		myState: deneme
 	}
 }
 
