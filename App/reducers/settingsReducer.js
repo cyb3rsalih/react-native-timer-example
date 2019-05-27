@@ -1,4 +1,4 @@
-import { DENEME_MESAJI } from './../actions/settings'
+import { DENEME_MESAJI,TOGGLE_VIBRATION } from './../actions/settings'
 
 const initialState = {
     vibration:true,
@@ -13,6 +13,12 @@ export default (state = initialState, {type,payload}) => {
             return{
                 ...state,
                 deneme: payload
+            }
+        }
+        case TOGGLE_VIBRATION:{
+            return{
+                ...state,
+                vibration: !state.vibration
             }
         }
         default: return state

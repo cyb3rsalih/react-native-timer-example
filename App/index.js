@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import {Vibration ,StyleSheet, Text, View, StatusBar, TouchableOpacity, Dimensions, Picker, Platform} from 'react-native';
 import { connect } from 'react-redux';
 
-import {changeDenemeMesaji} from './actions/settings'
+import {changeDenemeMesaji, toggleVibration} from './actions/settings'
 
 
 
@@ -46,8 +46,10 @@ const AVAILABLE_SECONDS = createArray(60)
 class App extends Component {
 
 	static propTypes = {
-		myState: PropTypes.string.isRequired,
-		changeDenemeMesaji: PropTypes.func.isRequired
+		deneme: PropTypes.string.isRequired,
+		vibration: PropTypes.bool.isRequired,
+		changeDenemeMesaji: PropTypes.func.isRequired,
+		toggleVibration: PropTypes.func.isRequired,
 	}
 
 	state = {
@@ -76,13 +78,13 @@ class App extends Component {
 
 	onPressStart = () => {
 		this.props.changeDenemeMesaji('StArT')
-		Vibration.vibrate(DURATION)
+		this.props.vibration ? Vibration.vibrate(DURATION) : null
 				this.setState({ 
 					remainingSeconds: parseInt(this.state.selectedMinutes,10) * 60 + parseInt(this.state.selectedSeconds,10),
 					isRunning : true })
 					
 				this.interval = setInterval(() => {
-					this.setState({ remainingSeconds: this.state.remainingSeconds -1 },() =>  start.play())
+					this.setState({ remainingSeconds: this.state.remainingSeconds -1 },() => this.state.remainingSeconds == 0 ? null : start.play())
 				},1000)		
 	}
 
@@ -90,7 +92,7 @@ class App extends Component {
 		this.props.changeDenemeMesaji('StArT')
 
 		end.play()
-		start.play()
+		//start.play()
 		//Vibration.vibrate(2000)
 		clearInterval(this.interval)
 		this.interval = null
@@ -140,7 +142,8 @@ class App extends Component {
     return (
       <View style={styles.container}>
         <StatusBar barStyle='light-content' />
-				<Text onPress={() => this.props.changeDenemeMesaji('AT')} style={{color:'#fff'}}>LOAD ACTION * {this.props.myState}</Text>
+				<Text onPress={() => this.props.toggleVibration()} style={{color:'#fff'}}> Vibration is  {this.props.vibration ? 'ON' : 'OFF'}</Text>
+				<Text onPress={() => this.props.changeDenemeMesaji('AT')} style={{color:'#fff'}}>LOAD ACTION * {this.props.deneme}</Text>
 
 				{
 				this.state.isRunning  ? 
@@ -166,15 +169,18 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
-	const { deneme } = state.settings
+const mapStateToProps = ({settings}) => {
+	const { deneme,vibration } = settings
+
 	return {
-		myState: deneme
+		deneme,
+		vibration
 	}
 }
 
 const mapDispatchToProps = {
-	changeDenemeMesaji
+	changeDenemeMesaji,
+	toggleVibration
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(App)
