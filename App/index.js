@@ -1,5 +1,13 @@
 import React, {Component} from 'react';
+import PropTypes from 'prop-types'
+
 import {Vibration ,StyleSheet, Text, View, StatusBar, TouchableOpacity, Dimensions, Picker, Platform} from 'react-native';
+import { connect } from 'react-redux';
+
+import {changeDenemeMesaji} from './actions/settings'
+
+
+
 var Sound = require('react-native-sound');
 Sound.setCategory('Playback');
 var start = new Sound('start.mp3', Sound.MAIN_BUNDLE)
@@ -35,23 +43,23 @@ const createArray = length => {
 const AVAILABLE_MINUTES = createArray(10)
 const AVAILABLE_SECONDS = createArray(60)
 
-export default class App extends Component {
+class App extends Component {
 
+	static propTypes = {
+		myState: PropTypes.string.isRequired,
+		changeDenemeMesaji: PropTypes.func.isRequired
+	}
 
 	state = {
 		remainingSeconds:5,
 		isRunning:false,
 		selectedMinutes:'0',
 		selectedSeconds:'5',
+		startTitle:'start',
+		stopTitle:'stop'
 	}
 
 	interval = null
-
-
-	componentDidMount(){
-	
-	}
-
 	componentDidUpdate(prevProps, prevState) {
 		if(this.state.remainingSeconds === 0 && prevState.remainingSeconds !== 0 ){
 			this.stop()
@@ -67,7 +75,7 @@ export default class App extends Component {
 	
 
 	onPressStart = () => {
-		
+		this.props.changeDenemeMesaji('StArT')
 		Vibration.vibrate(DURATION)
 				this.setState({ 
 					remainingSeconds: parseInt(this.state.selectedMinutes,10) * 60 + parseInt(this.state.selectedSeconds,10),
@@ -79,9 +87,11 @@ export default class App extends Component {
 	}
 
 	stop = () => {
+		this.props.changeDenemeMesaji('StArT')
+
 		end.play()
 		start.play()
-		Vibration.vibrate(2000)
+		//Vibration.vibrate(2000)
 		clearInterval(this.interval)
 		this.interval = null
 		//this.setState({remainingSeconds : 5})
@@ -130,6 +140,7 @@ export default class App extends Component {
     return (
       <View style={styles.container}>
         <StatusBar barStyle='light-content' />
+				<Text onPress={() => this.props.changeDenemeMesaji('AT')} style={{color:'#fff'}}>LOAD ACTION * {this.props.myState}</Text>
 
 				{
 				this.state.isRunning  ? 
@@ -150,12 +161,23 @@ export default class App extends Component {
 					</TouchableOpacity>
 				}
 
-
-
       </View>
     );
   }
 }
+
+const mapStateToProps = (state) => {
+	const myState = state.deneme
+	return {
+		myState
+	}
+}
+
+const mapDispatchToProps = {
+	changeDenemeMesaji
+}
+
+export default connect(mapStateToProps,mapDispatchToProps)(App)
 
 const styles = StyleSheet.create({
   container: {
