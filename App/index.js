@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import {Vibration ,StyleSheet, Text, View, StatusBar, TouchableOpacity, Dimensions, Picker, Platform} from 'react-native';
 import { connect } from 'react-redux';
 
-import {changeDenemeMesaji, toggleVibration} from './actions/settings'
+import {toggleVibration, toggleVoice, toggleTick} from './actions/settings'
 
 
 
@@ -32,6 +32,7 @@ const getRemaining = (time) => {
 const createArray = length => {
 	const arr = []
 	let i = 0;
+
 	while(i < length){
 		arr.push(i.toString())
 		i += 1
@@ -46,10 +47,14 @@ const AVAILABLE_SECONDS = createArray(60)
 class App extends Component {
 
 	static propTypes = {
-		deneme: PropTypes.string.isRequired,
 		vibration: PropTypes.bool.isRequired,
-		changeDenemeMesaji: PropTypes.func.isRequired,
+		voice: PropTypes.bool.isRequired,
+		tick: PropTypes.bool.isRequired,
+
 		toggleVibration: PropTypes.func.isRequired,
+		toggleVoice: PropTypes.func.isRequired,
+		toggleTick: PropTypes.func.isRequired,
+		
 	}
 
 	state = {
@@ -77,23 +82,21 @@ class App extends Component {
 	
 
 	onPressStart = () => {
-		this.props.changeDenemeMesaji('StArT')
-		this.props.vibration ? Vibration.vibrate(DURATION) : null
+				this.props.vibration ? Vibration.vibrate(DURATION) : null
+
 				this.setState({ 
 					remainingSeconds: parseInt(this.state.selectedMinutes,10) * 60 + parseInt(this.state.selectedSeconds,10),
 					isRunning : true })
 					
 				this.interval = setInterval(() => {
-					this.setState({ remainingSeconds: this.state.remainingSeconds -1 },() => this.state.remainingSeconds == 0 ? null : start.play())
+					this.setState({ remainingSeconds: this.state.remainingSeconds -1 },() => this.state.remainingSeconds == 0 ? null : this.props.tick ? start.play() : null)
 				},1000)		
 	}
 
 	stop = () => {
-		this.props.changeDenemeMesaji('StArT')
+		this.props.voice ? end.play() : null
+		this.props.vibration ? Vibration.vibrate(DURATION) : null
 
-		end.play()
-		//start.play()
-		//Vibration.vibrate(2000)
 		clearInterval(this.interval)
 		this.interval = null
 		//this.setState({remainingSeconds : 5})
@@ -142,8 +145,9 @@ class App extends Component {
     return (
       <View style={styles.container}>
         <StatusBar barStyle='light-content' />
+				<Text onPress={() => this.props.toggleTick()} style={{color:'#fff'}}> Tick ---->  {this.props.tick ? 'ON' : 'OFF'}</Text>
+				<Text onPress={() => this.props.toggleVoice()} style={{color:'#fff',marginVertical:20 }}> Voice is  {this.props.voice ? 'ON' : 'OFF'}</Text>
 				<Text onPress={() => this.props.toggleVibration()} style={{color:'#fff'}}> Vibration is  {this.props.vibration ? 'ON' : 'OFF'}</Text>
-				<Text onPress={() => this.props.changeDenemeMesaji('AT')} style={{color:'#fff'}}>LOAD ACTION * {this.props.deneme}</Text>
 
 				{
 				this.state.isRunning  ? 
@@ -170,17 +174,19 @@ class App extends Component {
 }
 
 const mapStateToProps = ({settings}) => {
-	const { deneme,vibration } = settings
+	const { vibration, voice, tick } = settings
 
 	return {
-		deneme,
-		vibration
+		vibration,
+		voice,
+		tick
 	}
 }
 
 const mapDispatchToProps = {
-	changeDenemeMesaji,
-	toggleVibration
+	toggleVibration,
+	toggleVoice,
+	toggleTick
 }
 
 export default connect(mapStateToProps,mapDispatchToProps)(App)
