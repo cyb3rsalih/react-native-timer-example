@@ -145,7 +145,7 @@ class App extends Component {
     return (
       <View style={styles.container}>
         <StatusBar barStyle='light-content' />
-				<Text onPress={() => this.props.toggleTick()} style={{color:'#fff'}}> Tick ---->  {this.props.tick ? 'ON' : 'OFF'}</Text>
+				<Text onPress={() => this.props.toggleTick()} style={{color:'#fff'}}> Tick is  {this.props.tick ? 'ON' : 'OFF'}</Text>
 				<Text onPress={() => this.props.toggleVoice()} style={{color:'#fff',marginVertical:20 }}> Voice is  {this.props.voice ? 'ON' : 'OFF'}</Text>
 				<Text onPress={() => this.props.toggleVibration()} style={{color:'#fff'}}> Vibration is  {this.props.vibration ? 'ON' : 'OFF'}</Text>
 
