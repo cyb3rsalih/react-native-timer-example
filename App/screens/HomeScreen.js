@@ -6,47 +6,18 @@ import { connect } from 'react-redux';
 
 import {toggleVibration, toggleVoice, toggleTick} from './../actions/settings'
 
+import * as CONFIG from '../config/functions'
 
 var Sound = require('react-native-sound');
 Sound.setCategory('Playback');
 var start = new Sound('start.mp3', Sound.MAIN_BUNDLE)
 var end = new Sound('end.wav', Sound.MAIN_BUNDLE)
-
-const DURATION = 1000 // For ios, not changeable
-// Wait times between vibrates.
-// If passed with true it will be a loop -> 1,2,3,1,2,3
-const PATTERN = [1000,2000,3000] 
-
 const screen = Dimensions.get('window')
-
-// Take number add 0 into, 3 > 03 , 10 > 010 and by slice get last 2 digits
-const formatNumber = (number) => `0${number}`.slice(-2)
-
-const getRemaining = (time) => {
-	const minutes = Math.floor( time/60 )
-	const seconds = Math.floor( time - minutes * 60 )
-	return { minutes: formatNumber(minutes), seconds: formatNumber(seconds) }
-}
-
-const createArray = length => {
-	const arr = []
-	let i = 0;
-
-	while(i < length){
-		arr.push(i.toString())
-		i += 1
-	}
-
-	return arr
-}
-
-const AVAILABLE_MINUTES = createArray(10)
-const AVAILABLE_SECONDS = createArray(60)
 
 
 class HomeScreen extends React.Component {
 
-	static propTypes = {
+    static propTypes = {
 		vibration: PropTypes.bool.isRequired,
 		voice: PropTypes.bool.isRequired,
 		tick: PropTypes.bool.isRequired,
@@ -82,7 +53,7 @@ class HomeScreen extends React.Component {
 	
 
 	onPressStart = () => {
-				this.props.vibration ? Vibration.vibrate(DURATION) : null
+				this.props.vibration ? Vibration.vibrate( CONFIG.DURATION ) : null
 
 				this.setState({ 
 					remainingSeconds: parseInt(this.state.selectedMinutes,10) * 60 + parseInt(this.state.selectedSeconds,10),
@@ -95,7 +66,7 @@ class HomeScreen extends React.Component {
 
 	stop = () => {
 		this.props.voice ? end.play() : null
-		this.props.vibration ? Vibration.vibrate(DURATION) : null
+		this.props.vibration ? Vibration.vibrate(CONFIG.DURATION) : null
 
 		clearInterval(this.interval)
 		this.interval = null
@@ -103,6 +74,7 @@ class HomeScreen extends React.Component {
 		this.setState({ isRunning : false })
 	}
 
+    // Make it component
 	renderPickers = () => {
 		return (
 			<View style={styles.pickerContainer}>
@@ -113,7 +85,7 @@ class HomeScreen extends React.Component {
 					onValueChange= {itemValue => { this.setState({selectedMinutes:itemValue}) }}
 					mode='dropdown' >
 						{ 
-							AVAILABLE_MINUTES.map(value => (
+							CONFIG.AVAILABLE_MINUTES.map(value => (
 								<Picker.Item key={value} label={value} value={value} />
 								)
 							)
@@ -127,7 +99,7 @@ class HomeScreen extends React.Component {
 					onValueChange= {itemValue => { this.setState({selectedSeconds : itemValue}) } }
 					mode='dropdown' >
 						{ 
-							AVAILABLE_SECONDS.map(value => (
+							CONFIG.AVAILABLE_SECONDS.map(value => (
 								<Picker.Item key={value} label={value} value={value} />
 								)
 							)
@@ -139,37 +111,37 @@ class HomeScreen extends React.Component {
 		)
 	}
 
-  render() {
-		const { minutes, seconds } = getRemaining(this.state.remainingSeconds)
+    render() {
+		const { minutes, seconds } = CONFIG.getRemaining(this.state.remainingSeconds)
 		
-    return (
-      <View style={styles.container}>
-        <StatusBar barStyle='light-content' />
-				<Text onPress={() => this.props.toggleTick()} style={{color:'#fff'}}> Tick is  {this.props.tick ? 'ON' : 'OFF'}</Text>
-				<Text onPress={() => this.props.toggleVoice()} style={{color:'#fff',marginVertical:20 }}> Voice is  {this.props.voice ? 'ON' : 'OFF'}</Text>
-				<Text onPress={() => this.props.toggleVibration()} style={{color:'#fff'}}> Vibration is  {this.props.vibration ? 'ON' : 'OFF'}</Text>
+        return (
+        <View style={styles.container}>
+            <StatusBar barStyle='light-content' />
+                    <Text onPress={() => this.props.toggleTick()} style={{color:'#fff'}}> Tick is  {this.props.tick ? 'ON' : 'OFF'}</Text>
+                    <Text onPress={() => this.props.toggleVoice()} style={{color:'#fff',marginVertical:20 }}> Voice is  {this.props.voice ? 'ON' : 'OFF'}</Text>
+                    <Text onPress={() => this.props.toggleVibration()} style={{color:'#fff'}}> Vibration is  {this.props.vibration ? 'ON' : 'OFF'}</Text>
 
-				{
-				this.state.isRunning  ? 
-					<Text style={styles.timerText} > {`${minutes}:${seconds}`} </Text>
-																:
-					this.renderPickers()
- 				}
+                    {
+                    this.state.isRunning  ? 
+                        <Text style={styles.timerText} > {`${minutes}:${seconds}`} </Text>
+                                                                    :
+                        this.renderPickers()
+                    }
 
-				{
-				!this.state.isRunning ?     
-					<TouchableOpacity onPress={ () => this.onPressStart() } style={styles.button} >
-							<Text style={styles.buttonText} >Start</Text>
-					</TouchableOpacity>  : 
-				
-						
-					<TouchableOpacity onPress={ () => this.stop() } style={[styles.button,styles.buttonStop]} >
-							<Text style={[styles.buttonText,styles.buttonTextStop]} >Stop</Text>
-					</TouchableOpacity>
-				}
+                    {
+                    !this.state.isRunning ?     
+                        <TouchableOpacity onPress={ () => this.onPressStart() } style={styles.button} >
+                                <Text style={styles.buttonText} >Start</Text>
+                        </TouchableOpacity>  : 
+                    
+                            
+                        <TouchableOpacity onPress={ () => this.stop() } style={[styles.button,styles.buttonStop]} >
+                                <Text style={[styles.buttonText,styles.buttonTextStop]} >Stop</Text>
+                        </TouchableOpacity>
+                    }
 
-      </View>
-    );
+        </View>
+        );
   }
 }
 
@@ -251,11 +223,4 @@ const styles = StyleSheet.create({
           color:'#fff',
           fontSize:20
       },
-      backgroundVideo: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      bottom: 0,
-      right: 0,
-    },
   });
