@@ -1,7 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import {Vibration, Text, View, StatusBar, TouchableOpacity, Picker,} from 'react-native';
+import {Vibration, Text, View, StatusBar, Picker,} from 'react-native';
 import { connect } from 'react-redux';
+
+import {TouchableOpacity} from 'react-native-gesture-handler'
+import { Button } from 'react-native-paper';
+
 
 import * as CONFIG from '../config/functions'
 import styles from './../styles/home.style';
@@ -16,7 +20,8 @@ var end = new Sound('end.wav', Sound.MAIN_BUNDLE)
 class HomeScreen extends React.Component {
 
     static navigationOptions = {
-        title: 'Home',
+		title: 'Home',
+		header: null
       };
 
     static propTypes = {
@@ -41,14 +46,12 @@ class HomeScreen extends React.Component {
 		}
 	}
 	
-
 	componentWillUnmount() {
 		if(this.interval){
 			clearInterval(this.interval)
 		}
 	}
 	
-
 	onPressStart = () => {
         this.props.vibration ? Vibration.vibrate( CONFIG.DURATION ) : null
 
@@ -115,9 +118,9 @@ class HomeScreen extends React.Component {
         <View style={styles.container}>
             <StatusBar barStyle='light-content' />
              
-                <TouchableOpacity style={ styles.settingsButton } onPress={ () => this.props.navigation.navigate('Settings') }>  
-                    <Text style={{color:'#fff'}} >SETTINGS</Text>
-                </TouchableOpacity>
+				{/* <Button style={{borderColor:'#fff'}} color={'white'} icon="settings" mode="outlined" onPress={() => this.props.navigation.navigate('Settings')}>
+					Settings
+				</Button> */}
 
                 {
                 this.state.isRunning  ? 

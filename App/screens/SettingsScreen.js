@@ -1,12 +1,21 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import {View, Text, TouchableOpacity} from 'react-native'
+import {View, Text} from 'react-native'
 import { connect } from 'react-redux'
+
+import { Switch } from 'react-native-paper';
+
 import {toggleVibration, toggleVoice, toggleTick} from './../actions/settings'
+
+import {TouchableOpacity} from 'react-native-gesture-handler'
 
 import styles from './../styles/settings.style'
 
 class SettingsScreen extends React.Component{
+
+    state = {
+        isSwitchOn: false,
+    }
 
     static navigationOptions = {
         title: 'Settings',
@@ -26,18 +35,22 @@ class SettingsScreen extends React.Component{
     render(){
         return(
             <View style={styles.container}>
-                    <TouchableOpacity style={ styles.button } onPress={ () => this.props.toggleTick() }>
-                        <Text> Tick is {this.props.tick ? 'ON' : 'OFF'} </Text>
-                    </TouchableOpacity>
 
-                    <TouchableOpacity style={ styles.button } onPress={ () => this.props.toggleVoice() }>
-                        <Text> Voice is {this.props.voice ? 'ON' : 'OFF'} </Text>
-                    </TouchableOpacity>
+                <View style={ styles.setting } > 
+                    <Text style={{color:'#fff'}}> Tick </Text>
+                    <Switch value={this.props.tick} onValueChange={ () => this.props.toggleTick() } />
+                </View>
 
-                    <TouchableOpacity style={ styles.button } onPress={ () => this.props.toggleVibration() }>
-                        <Text>  Vibration is {this.props.vibration ? 'ON' : 'OFF'} </Text>
-                    </TouchableOpacity>
-          
+                <View style={styles.setting} > 
+                    <Text style={{color:'#fff'}}>Voice</Text>
+                    <Switch value={this.props.voice} onValueChange={ () => this.props.toggleVoice() } />
+                </View>
+
+                <View style={styles.setting} > 
+                    <Text style={{color:'#fff'}}>Vibration</Text>
+                    <Switch value={this.props.vibration} onValueChange={ () => this.props.toggleVibration() } />
+                </View>
+
             </View>
         )
     }
@@ -47,9 +60,9 @@ const mapStateToProps = ({settings}) => {
 	const { vibration, voice, tick } = settings
 
 	return {
-		vibration,
-		voice,
-		tick
+        vibration,
+        voice,
+        tick
 	}
 }
 

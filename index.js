@@ -1,4 +1,5 @@
 import React from 'react'
+import { Provider as Paper } from 'react-native-paper';
 import {AppRegistry} from 'react-native';
 import App from './App/';
 import {name as appName} from './app.json';
@@ -16,7 +17,9 @@ const store = createStore(rootReducer,middleware)
 export default function Main(){
     return (
         <Provider store={store}>
-            <App/>
+            <Paper>
+                <App/>
+            </Paper>  
         </Provider>
     )
 }
