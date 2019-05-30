@@ -1,3 +1,4 @@
+/* HomeScreen Functions */
 export const DURATION = 1000 // For ios, not changeable
 // Wait times between vibrates.
 // If passed with true it will be a loop -> 1,2,3,1,2,3
@@ -26,3 +27,4 @@ export const createArray = length => {
 
 export const AVAILABLE_MINUTES = createArray(10)
 export const AVAILABLE_SECONDS = createArray(60)
+/* End of HomeScreen Functions */
